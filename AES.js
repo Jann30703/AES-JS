@@ -150,14 +150,80 @@ function aesDecrypt(ciphertext, key) {
     return state; // Trả về plaintext dạng ma trận
 }
 
+function textToBytes(text) {
+    let bytes = [];
+    for (let i = 0; i < text.length; i++) {
+        bytes.push(text.charCodeAt(i));
+    }
+    return bytes;
+}
+
+function bytesToText(bytes) {
+    return bytes.map(byte => String.fromCharCode(byte)).join('');
+}
+
+function aesEncryptText(plaintext, key) {
+    plaintext = padText(plaintext);  // Đảm bảo đủ bội số của 16 byte
+    let bytes = textToBytes(plaintext);
+    let ciphertext = [];
+
+    for (let i = 0; i < bytes.length; i += 16) {
+        let block = bytes.slice(i, i + 16);
+        //let state = toStateMatrix(block);
+        ciphertext.push(aesEncrypt(block, key));
+    }
+    return ciphertext;
+}
+
+
+function aesDecryptText(ciphertext, key) {
+    let decryptedBytes = [];
+
+    for (let i = 0; i < ciphertext.length; i++) {
+        let state = aesDecrypt(ciphertext[i], key);
+        decryptedBytes.push(...state.flat());  // Chuyển ma trận 4x4 về mảng 1D
+    }
+
+    let text = bytesToText(decryptedBytes);
+    return unpadText(text);
+}
+
+function padText(text) {
+    let padLength = 16 - (text.length % 16);
+    return text + String.fromCharCode(padLength).repeat(padLength);
+}
+
+function unpadText(text) {
+    let padLength = text.charCodeAt(text.length - 1);
+    return text.slice(0, -padLength);
+}
+
 // Kiểm thử
-let plaintext = [0x32, 0x88, 0x31, 0xE0, 0x43, 0x5A, 0x31, 0x37, 0xF6, 0x30, 0x98, 0x07, 0xA8, 0x8D, 0xA2, 0x34];
+// let plaintext = [0x32, 0x88, 0x31, 0xE0, 0x43, 0x5A, 0x31, 0x37, 0xF6, 0x30, 0x98, 0x07, 0xA8, 0x8D, 0xA2, 0x34];
 let key = [0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x12, 0x09, 0xCF, 0xF2, 0x4A, 0xCF];
-console.log(toStateMatrix(plaintext))
-let ciphertext = aesEncrypt(plaintext, key);
-console.log("Ciphertext:", ciphertext);
-let decryptedText = aesDecrypt(ciphertext, key);
-console.log("Decrypted Text:", decryptedText);
+key = textToBytes("MySecretAESKey12");  // 16-byte key
+// console.log(toStateMatrix(plaintext))
+// let ciphertext = aesEncrypt(plaintext, key);
+// console.log("Ciphertext:", ciphertext);
+// let decryptedText = aesDecrypt(ciphertext, key);
+// console.log("Decrypted Text:", decryptedText);
+const plaintext = "Hello World. I'm single now"
+console.log("plaintext: "+plaintext);
+console.log("plain text in bytes:");
+console.log(textToBytes(plaintext));
+console.log("plaintext in matrix:");
+console.log(toStateMatrix(textToBytes(plaintext)));
+const ciphertext = aesEncryptText(plaintext,key);
+console.log("ciphertext matrix: ");
+console.log(ciphertext);
+const decryptedText = aesDecryptText(JSON.parse(JSON.stringify(ciphertext)),key);
+console.log("Decrypted text: ")
+console.log(decryptedText);
+
+
+
+
+
 
 
 
