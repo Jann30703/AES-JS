@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Encryption</title>
+    <link rel="stylesheet" href="./style/file.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2>🛡️ File Encryption</h2>
+        
+        <label class="file-label">
+            📂 Chọn file để mã hóa:
+            <input type="file" id="fileInput">
+        </label>
+
+        <label class="encryption-mode-label">Chế độ mã hóa:</label>
+        <div class="radio-group">
+            <label><input type="radio" name="mode" value="ECB" checked> ECB</label>
+            <label><input type="radio" name="mode" value="CBC"> CBC</label>
+        </div>
+
+        <label>Chọn kích thước khóa:</label>
+        <div class="radio-group">
+            <label><input type="radio" name="keySize" value="128" checked> AES-128</label>
+            <label><input type="radio" name="keySize" value="192"> AES-192</label>
+            <label><input type="radio" name="keySize" value="256"> AES-256</label>
+        </div>
+
+        <button id="startProgram">🚀 Start Program</button>
+
+        <div class="output">
+            <h3>Output</h3>
+            <p><strong>🔑 Key:</strong> <span id="keyOutput">N/A</span></p>
+            <p><strong>⏳ Thời gian mã hóa:</strong> <span id="encryptionTime">0ms</span></p>
+            <p><strong>⏳ Thời gian giải mã:</strong> <span id="decryptionTime">0ms</span></p>
+            <p><strong>🔄 IV:</strong> <span id="ivOutput">N/A</span></p>
+        </div>
+    </div>
+</body>
+</html>

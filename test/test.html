@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã hóa & Giải mã File</title>
+</head>
+<body>
+    <h1>File Encryption Program with AES</h1>
+    <input type="file" id="fileInput">
+    
+    <h3>Encryption Mode:</h3>
+    <label><input type="radio" name="mode" value="ECB" checked> ECB</label>
+    <label><input type="radio" name="mode" value="CBC"> CBC</label>
+
+    <h3>Key length:</h3>
+    <label><input type="radio" name="keySize" value="128" checked> 128-bit</label>
+    <label><input type="radio" name="keySize" value="192"> 192-bit</label>
+    <label><input type="radio" name="keySize" value="256"> 256-bit</label>
+
+    <button id="encryptBtn">Start Program</button>
+<script type="module" src="./test.js"></script>
+</body>
+</html>

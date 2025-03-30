@@ -1,12 +1,4 @@
-export function gfMultiply(a, b) {
-    let result = 0;
-    while (b > 0) {
-        if (b & 1) result ^= a; // Nếu b lẻ, cộng (XOR) a vào kết quả
-        a = (a << 1) ^ (a & 0x80 ? 0x1B : 0); // Nếu bit cao nhất của a là 1, XOR với 0x1B (m(x))
-        b >>= 1; // Dịch phải b
-    }
-    return result & 0xFF; // Giữ kết quả trong phạm vi 8 bit
-}
+import { gfMultiply } from "./util.js";
 
 function gfInverse(x) {
     if (x === 0) return 0; // 0 không có nghịch đảo

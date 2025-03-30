@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Text Encryption</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style/text.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Bên trái: Nhập dữ liệu -->
+        <div class="left">
+            <h2>🔐 AES Encryption</h2>
+            
+            <label>Nhập văn bản:</label>
+            <textarea id="plaintext" placeholder="Nhập văn bản cần mã hóa"></textarea>
+    
+            <label>Chọn chế độ:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="mode" value="ECB" checked> ECB</label>
+                <label><input type="radio" name="mode" value="CBC"> CBC</label>
+            </div>
+    
+            <label>Chọn kích thước khóa:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="keySize" value="128" checked> AES-128</label>
+                <label><input type="radio" name="keySize" value="192"> AES-192</label>
+                <label><input type="radio" name="keySize" value="256"> AES-256</label>
+            </div>
+    
+            <button id="generateKey">🔑 Generate Key</button>
+            <input type="text" id="key" placeholder="Generated Key" readonly>
+    
+            <label>Nhập khóa:</label>
+            <input type="text" id="inputKey" placeholder="Nhập khóa ">
+    
+            <label>Nhập IV (nếu chọn CBC):</label>
+            <input type="text" id="iv" placeholder="IV - 16 ký tự">
+    
+            <button id="encrypt">🔒 Encrypt & Decrypt</button>
+        </div>
+    
+        <!-- Bên phải: Kết quả -->
+        <div class="right">
+            <h2>📜 Output</h2>
+            <div class="output-group">
+                <label>Cipher Text:</label>
+                <textarea id="cipherText" readonly></textarea>
+    
+                <label>Decrypted Text:</label>
+                <textarea id="decryptedText" readonly></textarea>
+    
+                <label>Encryption Time (ms):</label>
+                <textarea id="encryptionTime" readonly></textarea>
+    
+                <label>Decryption Time (ms):</label>
+                <textarea id="decryptionTime" readonly></textarea>
+            </div>
+        </div>
+    </div>    
+</body>
+</html>
