@@ -1,6 +1,10 @@
 import { measureAESPerformance } from "../script/aesMode.js";
 import { bytesToText, generateAESKey, downloadFile } from "../script/util.js";
 
+function renderOutput(id, data){
+  document.getElementById(id).innerHTML = data;
+}
+
 document.getElementById("startProgram").addEventListener("click", () => {
     const fileInput = document.getElementById("fileInput");
     const mode = document.querySelector('input[name="mode"]:checked').value;
@@ -17,17 +21,27 @@ document.getElementById("startProgram").addEventListener("click", () => {
 
     reader.onload = function (event) {
       const fileContent = event.target.result; // Nội dung file
-      const iv = generateAESKey(128); // Chế độ CBC cần IV
-      const result = measureAESPerformance(fileContent, key, iv, mode);
-      console.log(result);
-      document.getElementById('keyOutput').innerHTML = btoa(bytesToText(key));
-      document.getElementById('encryptionTime').innerHTML = result.encryptionTime;
-      document.getElementById('decryptionTime').innerHTML = result.decryptionTime;
-      document.getElementById('ivOutput').innerHTML = btoa(bytesToText(iv));
-      downloadFile(bytesToText(result.ciphertext.flat(Infinity)), "encryption" + ".bin");
-      downloadFile(result.decryptedText, "Decryption" + ".txt");
+      let result = {};
+      // console.log(fileContent);
+
+      if(mode === 'ECB'){
+        result = measureAESPerformance(fileContent, key);
+        handleOutput(result,key);
+      }
+      else if(mode === 'CBC'){
+        const iv = generateAESKey(128); // Chế độ CBC cần IV
+        result = measureAESPerformance(fileContent, key, iv, mode);
+        handleOutput(result, key, iv);
+      }
     };
-
     reader.readAsText(file);
-});
-
+  });
+  
+  function handleOutput(result, key, iv = null){
+    renderOutput('keyOutput', btoa(bytesToText(key)));
+    renderOutput('encryptionTime', result.encryptionTime);
+    renderOutput('decryptionTime', result.decryptionTime);
+    renderOutput('ivOutput',iv ? btoa(bytesToText(iv)) : "N/A");
+    downloadFile(bytesToText(result.ciphertext.flat(Infinity)), "encryption.bin");
+    downloadFile(result.decryptedText, "Decryption.txt");
+  }
