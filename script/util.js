@@ -64,3 +64,12 @@ export function generateAESKeyString(bits) {
 
     return key; // Trả về chuỗi khóa ngẫu nhiên
 }
+
+//Download file
+export function downloadFile(content, filename) {
+    const blob = new Blob([content], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+}

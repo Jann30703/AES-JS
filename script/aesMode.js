@@ -64,42 +64,23 @@ export function aesDecryptCBC(ciphertext, key) {
     return unpadText(text); // Loại bỏ padding và chuyển về text
 }
   
-export function measureAESPerformance(plaintext, key) {
-    const startEncrypt = performance.now();
-    const ciphertext = aesEncryptText(plaintext, key);
-    const endEncrypt = performance.now();
-    const encryptionTime = (endEncrypt - startEncrypt).toFixed(4);
+export function measureAESPerformance(plaintext, key, iv = null, mode = 'ECB') {
+
+    const encrypt = mode === 'ECB' ? aesEncryptText : aesEncryptCBC;
+    const decrypt = mode === 'ECB' ? aesDecryptText : aesDecryptCBC;
+
+
+      const startEncrypt = performance.now();
+      const ciphertext = encrypt(plaintext, key, iv);
+      const endEncrypt = performance.now();
+      const encryptionTime = (endEncrypt - startEncrypt).toFixed(4);
   
-    const startDecrypt = performance.now();
-    const decryptedText = aesDecryptText(JSON.parse(JSON.stringify(ciphertext)), key);
-    const endDecrypt = performance.now();
-    const decryptionTime = (endDecrypt - startDecrypt).toFixed(4);
+      const startDecrypt = performance.now();
+      const decryptedText = decrypt(JSON.parse(JSON.stringify(ciphertext)), key);
+      const endDecrypt = performance.now();
+      const decryptionTime = (endDecrypt - startDecrypt).toFixed(4);
 
-    return { ciphertext, decryptedText, encryptionTime, decryptionTime };
+      return { ciphertext, decryptedText, encryptionTime, decryptionTime };
 }
-
-// Mã hóa file
-function encryptFile(fileContent, key, iv = null, mode = "ECB") {
-  let encryptedData;
-  if (mode === "ECB") {
-      encryptedData = aesEncryptText(fileContent, key);
-  } else if (mode === "CBC") {
-      encryptedData = aesEncryptCBC(fileContent, key, iv);
-  }
-  return encryptedData;
-}
-
-// Giải mã file
-function decryptFile(encryptedData, key, mode = "ECB") {
-  let decryptedData;
-  if (mode === "ECB") {
-      decryptedData = aesDecryptText(encryptedData, key);
-  } else if (mode === "CBC") {
-      decryptedData = aesDecryptCBC(encryptedData, key);
-  }
-  return decryptedData;
-}
-
-export { encryptFile, decryptFile };
 
 // console.log(measureAESPerformance('Hello moi nguoi', generateAESKey(128)));
