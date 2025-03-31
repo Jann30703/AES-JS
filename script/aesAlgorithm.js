@@ -5,15 +5,15 @@ const SBOX = generateSBox();
 const INV_SBOX = generateInverseSBox();
 const RCON = generateRCON(14);
 
-function subWord(word) {
+export function subWord(word) {
   return word.map((byte) => SBOX[byte]);
 }
 
-function rotWord(word) {
+export function rotWord(word) {
   return [word[1], word[2], word[3], word[0]];
 }
 
-function keyExpansion(key) {
+export function keyExpansion(key) {
   let expandedKeys = [];
   let words = [];
 

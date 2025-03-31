@@ -29,7 +29,7 @@ function xorBlocks(block1, block2) {
     return block1.map((byte, i) => byte ^ block2[i]);
 }
 
-function aesEncryptCBC(plaintext, key, iv) {
+export function aesEncryptCBC(plaintext, key, iv) {
     plaintext = padText(plaintext);
     let bytes = textToBytes(plaintext);
     let ciphertext = [];
@@ -46,7 +46,7 @@ function aesEncryptCBC(plaintext, key, iv) {
     return [iv, ...ciphertext]; // Trả về IV + ciphertext để giải mã đúng
 }
 
-function aesDecryptCBC(ciphertext, key) {
+export function aesDecryptCBC(ciphertext, key) {
     let iv = ciphertext[0]; // Lấy IV từ ciphertext
     let decryptedText = [];
     let prevBlock = iv;
@@ -64,14 +64,14 @@ function aesDecryptCBC(ciphertext, key) {
     return unpadText(text); // Loại bỏ padding và chuyển về text
 }
   
-function measureAESPerformance(plaintext, key) {
+export function measureAESPerformance(plaintext, key) {
     const startEncrypt = performance.now();
     const ciphertext = aesEncryptText(plaintext, key);
     const endEncrypt = performance.now();
     const encryptionTime = (endEncrypt - startEncrypt).toFixed(4);
   
     const startDecrypt = performance.now();
-    const decryptedText = aesDecryptText(ciphertext, key);
+    const decryptedText = aesDecryptText(JSON.parse(JSON.stringify(ciphertext)), key);
     const endDecrypt = performance.now();
     const decryptionTime = (endDecrypt - startDecrypt).toFixed(4);
 
@@ -102,4 +102,4 @@ function decryptFile(encryptedData, key, mode = "ECB") {
 
 export { encryptFile, decryptFile };
 
-console.log(measureAESPerformance('Hello moi nguoi', generateAESKey(128)));
+// console.log(measureAESPerformance('Hello moi nguoi', generateAESKey(128)));
