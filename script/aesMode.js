@@ -1,4 +1,4 @@
-import { padText, unpadText, textToBytes, bytesToText, generateAESKey } from "./util.js";
+import { padText, unpadText, textToBytes, bytesToText } from "./util.js";
 import { aesEncrypt, aesDecrypt } from "./aesAlgorithm.js";
 
 export function aesEncryptText(plaintext, key) {
@@ -64,23 +64,24 @@ export function aesDecryptCBC(ciphertext, key) {
     return unpadText(text); // Loại bỏ padding và chuyển về text
 }
   
-export function measureAESPerformance(plaintext, key, iv = null, mode = 'ECB') {
+function measureAESPerformance(plaintext, key, mode = 'ECB', iv = null) {
+  const encrypt = mode === 'ECB' ? aesEncryptText : aesEncryptCBC;
+  const decrypt = mode === 'ECB' ? aesDecryptText : aesDecryptCBC;
 
-    const encrypt = mode === 'ECB' ? aesEncryptText : aesEncryptCBC;
-    const decrypt = mode === 'ECB' ? aesDecryptText : aesDecryptCBC;
+  const startEncrypt = performance.now();
+  const ciphertext = encrypt(plaintext, key, iv);
+  const endEncrypt = performance.now();
 
+  const startDecrypt = performance.now();
+  const decryptedText = decrypt(JSON.parse(JSON.stringify(ciphertext)), key);
+  const endDecrypt = performance.now();
 
-      const startEncrypt = performance.now();
-      const ciphertext = encrypt(plaintext, key, iv);
-      const endEncrypt = performance.now();
-      const encryptionTime = (endEncrypt - startEncrypt).toFixed(4);
-  
-      const startDecrypt = performance.now();
-      const decryptedText = decrypt(JSON.parse(JSON.stringify(ciphertext)), key);
-      const endDecrypt = performance.now();
-      const decryptionTime = (endDecrypt - startDecrypt).toFixed(4);
-
-      return { ciphertext, decryptedText, encryptionTime, decryptionTime };
+  return { 
+      ciphertext, 
+      decryptedText, 
+      encryptionTime: (endEncrypt - startEncrypt).toFixed(3), 
+      decryptionTime: (endDecrypt - startDecrypt).toFixed(3) 
+  };
 }
 
-// console.log(measureAESPerformance('Hello moi nguoi', generateAESKey(128)));
+export { measureAESPerformance };

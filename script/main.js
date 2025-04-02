@@ -1,67 +1,60 @@
-import { bytesToText, generateAESKeyString, textToBytes } from './util.js'
-import { aesEncryptText, aesDecryptText,aesEncryptCBC ,aesDecryptCBC , measureAESPerformance } from './aesMode.js'
+import {bytesToText, generateAESKeyString, textToBytes} from './util.js'
+import { measureAESPerformance } from './aesMode.js';
 
-//Lấy giá trị plaintext
-function getPlaintext(){
-  const plaintext = document.getElementById('plaintext').value;
-  return plaintext;
-}
-
-//Chọn chế độ AES
-function getSelectedAESMode() {
-  // Lấy giá trị ban đầu (đã checked sẵn)
-  let selectedAESMode = document.querySelector('input[name="mode"]:checked').value;
-  return selectedAESMode;
-}
-
-//Chọn kích cỡ khóa
 function getSelectedKeySize() {
-  // Biến lưu giá trị hiện tại
-  let selectedKeySize = document.querySelector('input[name="keySize"]:checked').value;
-  return selectedKeySize; // Luôn trả về giá trị mới nhất
+    const selectedValue = document.querySelector('input[name="keySize"]:checked').value;
+    return selectedValue;
 }
 
-//Tạo khóa
+function getSelectedMode() {
+    const selectedValue = document.querySelector('input[name="mode"]:checked').value;
+    console.log(selectedValue);
+    return selectedValue;
+}
+
 function generateKey(){
-  let key = generateAESKeyString(getSelectedKeySize());
-  // console.log(key);
-  document.getElementById('key').value = `${key}`;
-  return key;
+    const keySize = getSelectedKeySize();
+    const key = generateAESKeyString(keySize);
+    document.querySelector('#key').value = key;
+    document.getElementById('inputKey').value = key;
 }
 
-document.getElementById('generateKey').addEventListener('click', ()=>{
-  document.getElementById('inputKey').value = generateKey();
-});
-
-//Chạy chương trình
-function runProgram(iv = null, mode = 'ECB'){
-  const plaintext = getPlaintext();
-  const key = document.getElementById('inputKey').value;
-  mode = getSelectedAESMode();
-  if(mode === 'ECB'){
-    const cypherText = aesEncryptText(plaintext, textToBytes(key));
-    const text = bytesToText(cypherText.flat(Infinity));
-    const decryptedText = aesDecryptText(cypherText, textToBytes(key));
-  }
-  else if(mode === 'CBC'){
-    iv = document.getElementById('iv').value;
-    const cypherText = aesEncryptCBC(plaintext, textToBytes(key), iv);
-    const text = bytesToText(cypherText.flat(Infinity));
-    const decryptedText = aesDecryptCBC(cypherText, textToBytes(key), iv);
-  }
-
-  const result = measureAESPerformance(plaintext, textToBytes(key));
-  document.getElementById('cipherText').value = bytesToText((result.ciphertext).flat(Infinity));
-  document.getElementById('decryptedText').value = result.decryptedText;
-  document.getElementById('encryptionTime').value = result.encryptionTime;
-  document.getElementById('decryptionTime').value = result.decryptionTime;
-  // console.log(`CypherText:${bytesToText((result.ciphertext).flat(Infinity))}`);
+function renderOutput(result, mode){
+    const ciphertext = mode === 'ECB' ? result.ciphertext.flat(Infinity) : result.ciphertext.flat(Infinity).slice(17);
+    document.querySelector('#cipherText').value = bytesToText(ciphertext);
+    document.querySelector('#decryptedText').value = result.decryptedText;
+    document.querySelector('#encryptionTime').value = result.encryptionTime;
+    document.querySelector('#decryptionTime').value = result.decryptionTime;
 }
 
-document.getElementById('encrypt').addEventListener('click',()=>{
-  runProgram();
-});
+function startAES(){
+    const plainText= document.querySelector('#plaintext').value;
+    if(plainText === ''){
+        alert('Văn bản không được để trống !');
+        return;   
+    }
+    const key = document.querySelector('#inputKey').value;
+    if (![16, 24, 32].includes(key.length)) {
+        alert(`Độ dài khóa phải là 16, 24 hoặc 32 ký tự.
+    Độ dài khóa hiện tại: ${key.length}`);
+        return;
+    }
+    
+    const mode = getSelectedMode();
+    if(mode === 'CBC'){
+        const iv = document.querySelector('#iv').value;
+        if(iv.length !== 16){
+            alert(`Độ dài của iv phải là 16 kí tự
+Độ dài hiện tại: ${iv.length}`);
+            return;
+        }
+        const result = measureAESPerformance(plainText,textToBytes(key),mode,textToBytes(iv));
+        renderOutput(result, mode);
+    }else{
+        const result = measureAESPerformance(plainText, textToBytes(key));
+        renderOutput(result, mode);
+    }
+}
 
-
-
-
+document.querySelector('#encrypt').addEventListener('click',startAES);
+document.querySelector('#generateKey').addEventListener('click', generateKey);
